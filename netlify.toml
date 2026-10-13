@@ -1,0 +1,13 @@
+# Netlify hosts the static CropGuard web UI only. The FastAPI + PyTorch inference
+# server (api/main.py) cannot run on Netlify, so the build is rooted in `static/`
+# to keep Netlify from pip-installing the multi-GB ML stack in requirements.txt.
+[build]
+  base = "static"
+  command = "rm -rf ../dist && mkdir -p ../dist/static ../dist/samples-media ../dist/api && cp index.html ../dist/ && cp -r css js ../dist/static/ && cp ../data/val/images/*.jpg ../dist/samples-media/ && cp ../data/advisory_db.json ../dist/api/advisory.json"
+  publish = "../dist"
+
+# Serve the advisory database at the same path the FastAPI server exposes.
+[[redirects]]
+  from = "/api/advisory"
+  to = "/api/advisory.json"
+  status = 200

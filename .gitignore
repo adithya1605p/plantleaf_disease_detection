@@ -23,3 +23,6 @@ data/train/labels.cache
 .idea/
 .DS_Store
 Thumbs.db
+
+# Netlify static build output
+dist/
