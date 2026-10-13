@@ -1,0 +1,110 @@
+{
+  "Apple_Scab": {
+    "display_name": "Apple Scab (Venturia inaequalis)",
+    "organic_remedy": "Apply sulfur spray or neem oil during early bud break; prune lower canopy to increase airflow.",
+    "chemical_remedy": "Apply preventative captan, myclobutanil, or mancozeb fungicides at green tip stage.",
+    "preventative": "Rake and destroy fallen infected leaves in autumn; utilize resistant cultivars like Liberty or Enterprise."
+  },
+  "Corn_Common_Rust": {
+    "display_name": "Corn Common Rust (Puccinia sorghi)",
+    "organic_remedy": "Dust with wettable sulfur at first detection; remove severely infected lower leaves if localized.",
+    "chemical_remedy": "Apply strobilurin (azoxystrobin) or triazole (propiconazole) fungicides before tassel emergence.",
+    "preventative": "Plant rust-tolerant hybrid corn varieties; plant early in the season to evade peak airborne spore loads."
+  },
+  "Potato_Early_Blight": {
+    "display_name": "Potato Early Blight (Alternaria solani)",
+    "organic_remedy": "Apply copper octanoate or copper hydroxide spray bi-weekly; enhance soil organic matter and mulch.",
+    "chemical_remedy": "Foliar application of chlorothalonil, mancozeb, or boscalid following blossom drop.",
+    "preventative": "Maintain a strict 3 to 4-year crop rotation; avoid overhead sprinkler irrigation to keep foliage dry."
+  },
+  "Potato_Late_Blight": {
+    "display_name": "Potato Late Blight (Phytophthora infestans)",
+    "organic_remedy": "Apply fixed copper formulations immediately prior to humid wet periods; immediately rogue infected plants.",
+    "chemical_remedy": "Apply systemic fungicides containing cyazofamid, fluopicolide, or mandipropamid.",
+    "preventative": "Plant certified disease-free seed tubers; eliminate cull piles; destroy volunteer potato sprouts."
+  },
+  "Tomato_Early_Blight": {
+    "display_name": "Tomato Early Blight (Alternaria linariae / solani)",
+    "organic_remedy": "Apply bio-fungicides (Bacillus subtilis) and liquid copper; prune lowest 12 inches of suckers/leaves.",
+    "chemical_remedy": "Spray chlorothalonil, azoxystrobin, or difenoconazole on a 7-10 day cycle during warm, humid conditions.",
+    "preventative": "Mulch soil surface around plants; stake and cage vines to elevate foliage away from splash zones."
+  },
+  "Tomato_Late_Blight": {
+    "display_name": "Tomato Late Blight (Phytophthora infestans)",
+    "organic_remedy": "Spray preventative copper soap formulations; urgently bag and dispose of infected foliage.",
+    "chemical_remedy": "Preventative and curative treatment with mefenoxam, cymoxanil, or propamocarb hydrochloride.",
+    "preventative": "Ensure full sun exposure with adequate plant spacing; remove solanaceous weed hosts (e.g. nightshade)."
+  },
+  "Healthy_Leaf": {
+    "display_name": "Healthy Plant Foliage",
+    "organic_remedy": "No disease remediation required. Maintain balanced compost tea or mild sea kelp extract application.",
+    "chemical_remedy": "None needed. Maintain balanced N-P-K fertilization according to routine soil test recommendations.",
+    "preventative": "Continue optimal drip irrigation, inspect undersides of foliage weekly for pest or pathogen inception."
+  },
+  "Grape_Black_Rot": {
+    "display_name": "Grape Black Rot (Guignardia bidwellii)",
+    "organic_remedy": "Apply wettable sulfur or copper octanoate spray at 10-14 day intervals from budbreak to veraison; remove all mummified berries from vine and ground.",
+    "chemical_remedy": "Apply myclobutanil, azoxystrobin, or tebuconazole fungicides starting at early bloom.",
+    "preventative": "Prune and trellis vines to ensure canopy sunlight penetration and rapid leaf drying; destroy wild Vitis vines in vicinity."
+  },
+  "Grape_Esca_Measles": {
+    "display_name": "Grape Esca / Black Measles (Phaeomoniella & Phaeoacremonium complex)",
+    "organic_remedy": "Apply Trichoderma-based bio-protectants directly to pruning wounds; avoid heavy water-stress irrigations.",
+    "chemical_remedy": "Apply wound sealant pastes containing thiophanate-methyl or boron immediately following winter pruning.",
+    "preventative": "Sanitize pruning shears with 70% alcohol between vines; remove and burn severely declining vines."
+  },
+  "Pepper_Bacterial_Spot": {
+    "display_name": "Bell Pepper Bacterial Spot (Xanthomonas campestris pv. vesicatoria)",
+    "organic_remedy": "Spray fixed copper hydroxide combined with Bacillus amyloliquefaciens biopesticide weekly.",
+    "chemical_remedy": "Apply copper bactericides tank-mixed with mancozeb to overcome copper-resistant bacterial strains.",
+    "preventative": "Plant certified disease-free hot-water treated seeds; enforce 2-year rotation with non-solanaceous crops."
+  },
+  "Tomato_Bacterial_Spot": {
+    "display_name": "Tomato Bacterial Spot (Xanthomonas perforans)",
+    "organic_remedy": "Apply bio-fungicides containing Bacillus subtilis or bacteriophage products; prune diseased lower foliage.",
+    "chemical_remedy": "Foliar application of copper hydroxide mixed with actigard (acibenzolar-S-methyl) for systemic acquired resistance.",
+    "preventative": "Avoid overhead sprinkler irrigation; stake plants; sanitize stakes and trellises between seasons."
+  },
+  "Tomato_Yellow_Leaf_Curl_Virus": {
+    "display_name": "Tomato Yellow Leaf Curl Virus (TYLCV / Begomovirus)",
+    "organic_remedy": "Apply insecticidal soap, neem oil, or pyrethrins to suppress silverleaf whitefly (Bemisia tabaci) insect vectors.",
+    "chemical_remedy": "Rotate systemic insecticides such as imidacloprid, acetamiprid, or spiromesifen to control whitefly populations.",
+    "preventative": "Install 50-mesh insect exclusion netting in nurseries; immediately rogue and bag infected stunt plants; plant TYLCV-resistant hybrids."
+  },
+  "Cherry_Powdery_Mildew": {
+    "display_name": "Cherry Powdery Mildew (Podosphaera clandestina)",
+    "organic_remedy": "Spray potassium bicarbonate or horticultural dormant oil at first sign of powdery talc mycelium.",
+    "chemical_remedy": "Apply quinoxyfen, myclobutanil, or flutriafol fungicides from shuck fall through harvest.",
+    "preventative": "Prune dense interior orchard canopy to improve air circulation; avoid excessive late-season nitrogen fertilization."
+  },
+  "Peach_Bacterial_Spot": {
+    "display_name": "Peach Bacterial Spot (Xanthomonas arboricola pv. pruni)",
+    "organic_remedy": "Apply dormant copper sulfate before bud swelling; apply zinc sulfate sprays in autumn.",
+    "chemical_remedy": "Apply oxytetracycline (Mycoshield) sprays at petal fall on a 7-day schedule during wet, windy weather.",
+    "preventative": "Plant resistant peach cultivars (e.g. Redhaven, Candor); plant windbreaks to minimize blowing sand leaf abrasions."
+  },
+  "Strawberry_Leaf_Scorch": {
+    "display_name": "Strawberry Leaf Scorch (Diplocarpon earlianum)",
+    "organic_remedy": "Apply bio-fungicide sprays (Bacillus subtilis) and copper soaps; remove desiccated infected leaves.",
+    "chemical_remedy": "Apply captan, pyraclostrobin, or cyprodinil fungicides post-harvest and during early spring crown flush.",
+    "preventative": "Plant disease-free certified crowns; maintain adequate runner spacing to expedite foliage drying."
+  },
+  "Corn_Northern_Leaf_Blight": {
+    "display_name": "Corn Northern Leaf Blight (Exserohilum turcicum)",
+    "organic_remedy": "Apply copper formulations or microbial bio-inoculants; shred and deeply bury crop residues post-harvest.",
+    "chemical_remedy": "Apply strobilurin or triazole fungicides (e.g. pyraclostrobin + metconazole) prior to tassel emergence.",
+    "preventative": "Plant corn hybrids containing specific Ht resistance genes; practice minimum 1-year rotation away from maize."
+  },
+  "Citrus_Greening": {
+    "display_name": "Citrus Greening / Huanglongbing (Candidatus Liberibacter asiaticus)",
+    "organic_remedy": "Intense foliar micronutrient feeding (zinc, manganese, iron) to sustain tree vigor; release Tamarixia radiata parasitoid wasps.",
+    "chemical_remedy": "Systemic trunk injection with oxytetracycline; rigorous vector control using imidacloprid against Asian Citrus Psyllid.",
+    "preventative": "Plant only certified disease-free nursery stock in enclosed screen houses; monitor psyllid populations with yellow sticky traps."
+  },
+  "Squash_Powdery_Mildew": {
+    "display_name": "Squash / Cucurbit Powdery Mildew (Podosphaera xanthii)",
+    "organic_remedy": "Spray sulfur dust, dilute milk spray (10-20%), or potassium bicarbonate solution on upper and lower leaf surfaces.",
+    "chemical_remedy": "Apply chlorothalonil, triflumizole, or boscalid fungicides at the first sign of white talcum colonies.",
+    "preventative": "Plant powdery mildew tolerant cucurbit cultivars; ensure wide plant spacing for sunlight and airflow."
+  }
+}

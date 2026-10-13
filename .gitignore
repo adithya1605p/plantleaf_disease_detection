@@ -1,0 +1,25 @@
+# Python cache and environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Ultralytics training runs & weights checkpoints
+runs/
+*.log
+
+# Caches
+.cache/
+data/val/labels.cache
+data/train/labels.cache
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,25 @@
+# Dataset configuration for YOLOv8 Multi-Crop Plant Disease Detection (PlantVillage Extended)
+path: . # dataset root directory
+train: data/train/images
+val: data/val/images
+
+# Classes
+names:
+  0: Apple_Scab
+  1: Corn_Common_Rust
+  2: Potato_Early_Blight
+  3: Potato_Late_Blight
+  4: Tomato_Early_Blight
+  5: Tomato_Late_Blight
+  6: Healthy_Leaf
+  7: Grape_Black_Rot
+  8: Grape_Esca_Measles
+  9: Pepper_Bacterial_Spot
+  10: Tomato_Bacterial_Spot
+  11: Tomato_Yellow_Leaf_Curl_Virus
+  12: Cherry_Powdery_Mildew
+  13: Peach_Bacterial_Spot
+  14: Strawberry_Leaf_Scorch
+  15: Corn_Northern_Leaf_Blight
+  16: Citrus_Greening
+  17: Squash_Powdery_Mildew
