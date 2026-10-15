@@ -296,11 +296,19 @@ function setupPresets() {
   });
 }
 
+// Bulletproof asset URL resolver for GitHub Pages & local servers
+function getAssetUrl(relPath) {
+  const clean = relPath.replace(/^(\.\/|\/)/, '');
+  const path = window.location.pathname;
+  const dir = path.substring(0, path.lastIndexOf('/') + 1);
+  return `${window.location.origin}${dir}${clean}`;
+}
+
 // Load a preset sample
 async function loadPresetSample(preset) {
   try {
     showToast(`Loading test specimen: ${preset.name}...`);
-    const imageUrl = `./samples/${preset.file}`;
+    const imageUrl = getAssetUrl(`samples/${preset.file}`);
     const response = await fetch(imageUrl);
     if (!response.ok) throw new Error("Could not fetch preset sample image");
     
@@ -880,7 +888,7 @@ function setupSplitSlider() {
 // Load Advisory Database for Library Tab
 async function loadAdvisoryDatabase() {
   try {
-    const res = await fetch('./data/advisory_db.json');
+    const res = await fetch(getAssetUrl('data/advisory_db.json'));
     if (res.ok) {
       const db = await res.json();
       state.advisoryDb = db;
