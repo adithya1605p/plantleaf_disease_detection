@@ -23,7 +23,8 @@ Built for precision agriculture, agronomists, greenhouse operators, and field fa
 - [About the PlantVillage Dataset](#-about-the-plantvillage-dataset)
 - [Model Training & Edge ONNX Export](#-model-training--edge-onnx-export)
 - [Automated Verification Suite](#-automated-verification-suite)
-- [Deploy to GitHub Pages](#-deploy-to-github-pages)
+- [Deploy to GitHub Pages (Serverless Web Studio)](#-deploy-to-github-pages-serverless-web-studio)
+- [Always-On 24/7 Cloud Backend (Docker & Render)](#-always-on-247-cloud-backend-docker--render)
 - [Directory Structure](#-directory-structure)
 - [License](#-license)
 
@@ -246,34 +247,52 @@ python verify_system.py
 
 ---
 
-## 🌐 Deploy to GitHub Pages
+## 🌐 Deploy to GitHub Pages (Serverless Web Studio)
 
-CropGuard AI features a **Dual-Engine Architecture** allowing it to run **100% serverless** directly in the browser on GitHub Pages without requiring Python servers or cloud GPU hosting, with an optional toggle to connect to a live remote FastAPI backend.
+CropGuard AI features a **Dual-Engine Architecture** that runs **100% serverless** directly in the browser on GitHub Pages without requiring Python servers, paid cloud GPUs, or an open laptop terminal.
 
-### Automatic Deployment (GitHub Actions)
-The repository includes a preconfigured GitHub Actions workflow at [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
+All static assets are pre-published to **both the repository root (`/`)**, the **`/docs` folder**, and a dedicated **`gh-pages` branch**.
 
-1. **Push your code to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Configure GitHub Pages deployment"
-   git push origin main
-   ```
-2. In your GitHub repository, navigate to **Settings** → **Pages**.
+### Quick Activation (1-Minute Setup)
+1. Go to your GitHub repository: [**adithya1605p/plantleaf_disease_detection**](https://github.com/adithya1605p/plantleaf_disease_detection)
+2. Click **Settings** → **Pages** (in the left sidebar under *Code and automation*).
 3. Under **Build and deployment**:
-   - **Source**: Select **GitHub Actions**.
-4. The workflow will run automatically and deploy your live diagnostic studio to:
+   * **Source**: Select **Deploy from a branch**.
+   * **Branch**: Select **`gh-pages`** (or `main`) and folder **`/ (root)`**.
+   * Click **Save**.
+4. GitHub Pages will build and publish your site at:
    ```text
-   https://<username>.github.io/<repo-name>/
+   https://adithya1605p.github.io/plantleaf_disease_detection/
    ```
 
-### Alternative: Deploy from Branch (`docs/` folder)
-If you prefer branch-based publishing:
-1. Navigate to **Settings** → **Pages**.
-2. Under **Build and deployment**:
-   - **Source**: Select **Deploy from a branch**.
-   - **Branch**: Select `main` and folder `/docs`.
-   - Click **Save**.
+### Automated GitHub Actions Workflow
+The repository also includes [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). If you prefer, set **Source** to **GitHub Actions** in Settings → Pages, and GitHub will deploy the static studio automatically on every commit pushed to `main`.
+
+---
+
+## ☁️ Always-On 24/7 Cloud Backend (Docker & Render)
+
+If you prefer to connect the web studio to a live PyTorch YOLOv8 server running in the cloud 24/7 (rather than the in-browser engine) without keeping your laptop on:
+
+### Option 1: 1-Click Render.com Deployment (Free Tier)
+1. Create a free account at [Render.com](https://render.com).
+2. Click **New +** → **Blueprint** (or **Web Service**).
+3. Connect your repository `adithya1605p/plantleaf_disease_detection`.
+4. Render detects [`render.yaml`](render.yaml) and automatically provisions:
+   * **Build Command**: `pip install -r requirements.txt`
+   * **Start Command**: `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
+5. Once deployed, copy your Render URL (e.g. `https://cropguard-ai.onrender.com`).
+6. In your GitHub Pages web studio, click **⚙️ Engine** in the top navbar, select **Remote / Local API**, paste your Render URL, and click **Save & Apply**!
+
+### Option 2: Docker Container Deployment
+The repository includes an optimized [`Dockerfile`](Dockerfile):
+```bash
+# Build the container
+docker build -t cropguard-ai .
+
+# Run the container
+docker run -p 8000:8000 cropguard-ai
+```
 
 ---
 
@@ -285,10 +304,12 @@ plant_disease_detection/
 │   └── workflows/
 │       └── deploy-pages.yml    # GitHub Actions automated Pages deployment workflow
 ├── api/
-│   └── main.py                 # FastAPI microservice & routing
+│   └── main.py                 # FastAPI microservice with dynamic asset routing & CORS
+├── css/
+│   └── style.css               # Root-level modern dark-mode stylesheet
 ├── data/
-│   ├── advisory_db.json        # Curated agronomic treatment database
-│   ├── plant_data.yaml         # YOLOv8 dataset configuration
+│   ├── advisory_db.json        # Curated phytosanitary agronomic database
+│   ├── plant_data.yaml         # YOLOv8 dataset taxonomy configuration
 │   ├── train/                  # Training images & YOLO annotation labels
 │   └── val/                    # Validation test specimens (images & labels)
 ├── docs/                       # Static distribution directory for GitHub Pages
@@ -298,24 +319,33 @@ plant_disease_detection/
 │   ├── js/app.js               # Dual-engine controller (In-Browser & Remote API)
 │   ├── data/advisory_db.json   # Static copy of phytosanitary advisory database
 │   └── samples/                # Static 1-click test specimen images
+├── js/
+│   └── app.js                  # Root-level dual-engine front-end controller
 ├── models/
 │   ├── yolo_detector.pt        # Fine-tuned PyTorch model weights (18 classes)
 │   └── yolo_detector.onnx      # Exported edge ONNX artifact (optional)
+├── samples/                    # Root-level 1-click test specimen images
 ├── src/
 │   ├── advisory.py             # Advisory resolution & severity calculation engine
 │   ├── dataset_generator.py    # Multi-crop foliar lesion synthesis engine
 │   ├── download_plantvillage.py# Official PlantVillage dataset ingestion guide
 │   ├── explainability.py       # Grad-CAM heatmap generation & blending
 │   └── export.py               # ONNX export utility
-├── static/
-│   ├── css/style.css           # Local development styling
-│   ├── js/app.js               # Local development frontend controller
-│   └── index.html              # Local web interface
+├── static/                     # Local development static assets
+│   ├── css/style.css
+│   ├── js/app.js
+│   └── index.html
+├── .gitignore                  # Git ignore rules
+├── .nojekyll                   # GitHub Pages raw static bypass
+├── Dockerfile                  # Container definition for 24/7 cloud deployments
+├── index.html                  # Root-level diagnostic studio for GitHub Pages
+├── netlify.toml                # Netlify deployment configuration
+├── render.yaml                 # Render.com Infrastructure-as-Code blueprint
 ├── requirements.txt            # Python dependencies
 ├── run.py                      # One-click launcher script
 ├── train.py                    # Model training & fine-tuning script
 ├── verify_system.py            # Automated end-to-end verification test suite
-└── README.md                   # Project documentation
+└── README.md                   # Comprehensive project documentation
 ```
 
 ---
