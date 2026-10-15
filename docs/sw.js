@@ -3,7 +3,7 @@
  * Enables offline execution and asset caching on mobile browsers in agricultural field environments.
  */
 
-const CACHE_NAME = 'cropguard-v1.1';
+const CACHE_NAME = 'cropguard-v1.2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
