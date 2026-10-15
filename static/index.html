@@ -11,13 +11,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
   <!-- Navigation Bar -->
   <nav class="navbar">
-    <a href="/" class="brand" id="brandLogo">
+    <a href="#" class="brand" id="brandLogo">
       <div class="brand-icon-wrapper">
         <svg class="brand-icon" viewBox="0 0 24 24">
           <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
@@ -42,11 +42,12 @@
     </div>
 
     <div class="nav-status">
-      <div class="status-pill" id="statusPill">
+      <div class="status-pill" id="statusPill" title="Current Engine Status">
         <div class="status-dot"></div>
-        <span id="statusText">Connecting...</span>
+        <span id="statusText">In-Browser Engine</span>
       </div>
-      <a href="/docs" target="_blank" class="api-docs-link" id="linkApiDocs">API Swagger ↗</a>
+      <button class="btn-backend-settings" id="btnSettings" title="Engine & Backend Settings">⚙️ Engine</button>
+      <a href="https://github.com/adithya1605p/plantleaf_disease_detection" target="_blank" class="api-docs-link" id="linkApiDocs">GitHub Repo ↗</a>
     </div>
   </nav>
 
@@ -67,7 +68,7 @@
         </div>
         <div class="telemetry-badges">
           <div class="telemetry-chip" id="deviceChip">
-            <span>Edge Unit:</span> <strong>CPU (Optimized)</strong>
+            <span>Engine:</span> <strong>WebAssembly / Canvas Edge</strong>
           </div>
           <div class="telemetry-chip" id="classesChip">
             <span>Pathology Classes:</span> <strong>18 Registered (PlantVillage)</strong>
@@ -345,6 +346,47 @@
     </div>
   </div>
 
-  <script src="/static/js/app.js"></script>
+  <!-- Engine Settings Modal -->
+  <div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 540px; max-width: 95%;">
+      <div class="card-title-bar">
+        <h3><span>⚙️</span> Diagnostic Engine Settings</h3>
+        <button id="btnCloseSettings" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="margin-bottom: 1.25rem;">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          CropGuard AI runs in <strong>In-Browser Web Engine mode</strong> on GitHub Pages by default (zero server setup required). You can optionally connect to a live FastAPI / PyTorch YOLOv8 backend.
+        </p>
+
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Diagnostic Mode
+        </label>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <button type="button" class="btn-secondary" id="btnModeClient" style="flex: 1; border-color: var(--emerald-bright);">
+            🌿 In-Browser Engine
+          </button>
+          <button type="button" class="btn-secondary" id="btnModeServer" style="flex: 1;">
+            ⚡ Remote / Local API
+          </button>
+        </div>
+
+        <div id="serverConfigGroup" style="display: none;">
+          <label for="inputBackendUrl" style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+            FastAPI Server Endpoint
+          </label>
+          <input type="text" id="inputBackendUrl" placeholder="http://127.0.0.1:8000 or https://your-cropguard.onrender.com" 
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--card-border); background: var(--bg-secondary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Must be a running CropGuard FastAPI instance with CORS enabled.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn-secondary" id="btnCancelSettings">Cancel</button>
+        <button type="button" class="btn-primary" id="btnSaveSettings">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
 </body>
 </html>

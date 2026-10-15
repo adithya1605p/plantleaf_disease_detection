@@ -222,6 +222,27 @@ body {
   background: rgba(16, 185, 129, 0.05);
 }
 
+.btn-backend-settings {
+  color: var(--text-secondary);
+  background: rgba(12, 22, 17, 0.7);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-backend-settings:hover {
+  color: var(--emerald-bright);
+  border-color: var(--emerald-bright);
+  background: rgba(16, 185, 129, 0.08);
+}
+
 /* Container */
 .container {
   max-width: 1440px;

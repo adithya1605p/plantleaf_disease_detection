@@ -8,8 +8,15 @@ import webbrowser
 from pathlib import Path
 
 def main():
+    if sys.platform == "win32":
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     print("=" * 65)
-    print("      🌱 CropGuard Edge AI - Plant Disease Vision & Advisory")
+    print("      [+] CropGuard Edge AI - Plant Disease Vision & Advisory")
     print("=" * 65)
     
     # 1. Verify weights

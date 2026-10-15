@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CropGuard AI - Edge Plant Disease Vision & Agronomic Advisory Engine</title>
+  <meta name="description" content="Edge-deployable crop pathology diagnostic platform with YOLOv8 lesion detection, Grad-CAM attention heatmaps, and agronomic prescriptive advisory.">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="#" class="brand" id="brandLogo">
+      <div class="brand-icon-wrapper">
+        <svg class="brand-icon" viewBox="0 0 24 24">
+          <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>CropGuard AI</h1>
+        <span>Edge Pathology & Advisory Engine</span>
+      </div>
+    </a>
+
+    <div class="nav-center">
+      <button class="nav-tab active" data-target="studio" id="navTabStudio">
+        <span>🔬</span> Diagnostic Studio
+      </button>
+      <button class="nav-tab" data-target="library" id="navTabLibrary">
+        <span>📚</span> Pathology Library
+      </button>
+      <button class="nav-tab" data-target="telemetry" id="navTabTelemetry">
+        <span>⚡</span> Edge Telemetry
+      </button>
+    </div>
+
+    <div class="nav-status">
+      <div class="status-pill" id="statusPill" title="Current Engine Status">
+        <div class="status-dot"></div>
+        <span id="statusText">In-Browser Engine</span>
+      </div>
+      <button class="btn-backend-settings" id="btnSettings" title="Engine & Backend Settings">⚙️ Engine</button>
+      <a href="https://github.com/adithya1605p/plantleaf_disease_detection" target="_blank" class="api-docs-link" id="linkApiDocs">GitHub Repo ↗</a>
+    </div>
+  </nav>
+
+  <!-- Main App Shell -->
+  <main class="container">
+
+    <!-- TAB 1: DIAGNOSTIC STUDIO -->
+    <div id="tabStudio">
+      
+      <!-- Hero Header -->
+      <section class="hero-header">
+        <div class="hero-title-area">
+          <h2>Precision Plant Foliage Pathology</h2>
+          <p class="hero-subtitle">
+            Upload plant foliage or select validated test specimens to trigger deep-learning lesion detection, 
+            Grad-CAM attention heatmaps, and prescriptive agronomic countermeasures.
+          </p>
+        </div>
+        <div class="telemetry-badges">
+          <div class="telemetry-chip" id="deviceChip">
+            <span>Engine:</span> <strong>WebAssembly / Canvas Edge</strong>
+          </div>
+          <div class="telemetry-chip" id="classesChip">
+            <span>Pathology Classes:</span> <strong>18 Registered (PlantVillage)</strong>
+          </div>
+          <div class="telemetry-chip">
+            <span>Pipeline:</span> <strong>YOLOv8 + Grad-CAM</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Studio Grid -->
+      <div class="studio-grid">
+        
+        <!-- LEFT: SPECIMEN ACQUISITION -->
+        <section class="glass-card" id="specimenCard">
+          <div class="card-title-bar">
+            <h3><span>🍃</span> Specimen Acquisition</h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Input Channel</span>
+          </div>
+
+          <!-- Quick Test Presets -->
+          <div class="presets-section">
+            <div class="section-label">
+              <span>Quick Test Specimens</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">1-Click Demo</span>
+            </div>
+            <div class="presets-grid" id="presetsGrid">
+              <!-- Dynamically populated via app.js -->
+            </div>
+          </div>
+
+          <!-- Upload Dropzone -->
+          <div class="dropzone-container" id="dropzone">
+            <svg class="dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <div class="dropzone-text">Drop leaf image here or click to browse</div>
+            <div class="dropzone-hint">Supports JPEG, PNG, WEBP (Max 15MB)</div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+          </div>
+
+          <!-- Preview Box -->
+          <div class="preview-box" id="previewBox" style="display: none;">
+            <img id="imagePreview" alt="Input specimen preview" src="">
+            <div class="scanner-overlay" id="scannerOverlay"></div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="upload-actions">
+            <button type="button" class="btn-secondary" id="btnWebcam">
+              <span>📷</span> Live Camera
+            </button>
+            <button type="button" class="btn-secondary" id="btnReset">
+              <span>🔄</span> Reset
+            </button>
+          </div>
+
+          <button type="button" class="btn-primary" id="btnDiagnose" disabled>
+            <span>⚡ Run AI Pathology Diagnosis</span>
+          </button>
+        </section>
+
+        <!-- RIGHT: DIAGNOSTIC & ADVISORY INTELLIGENCE -->
+        <section class="glass-card" id="analysisCard">
+          
+          <!-- Empty State -->
+          <div class="placeholder-state" id="placeholderState">
+            <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h4>Awaiting Plant Specimen</h4>
+            <p>Select a sample preset or drag and drop a leaf photograph on the left to analyze disease pathogens, calculate severity, and formulate treatments.</p>
+          </div>
+
+          <!-- Analysis Results View -->
+          <div id="resultsContainer" style="display: none;">
+            
+            <!-- Diagnosis Hero Banner -->
+            <div class="diagnosis-hero-banner banner-diseased" id="diagnosisHero">
+              <div class="diagnosis-badge-wrap">
+                <div class="diagnosis-icon-circle" id="diagnosisIcon">⚠️</div>
+                <div class="diagnosis-text">
+                  <h2 id="diseaseTitle">Analyzing...</h2>
+                  <div class="pathogen-scientific" id="diseaseScientific">Identifying pathogen...</div>
+                </div>
+              </div>
+              <div class="diagnosis-metrics-badge">
+                <div class="badge-pill badge-confidence" id="badgeConfidence">
+                  <span>Confidence:</span> <strong>--%</strong>
+                </div>
+                <div class="badge-pill badge-severity-mild" id="badgeSeverity">
+                  <span>Severity:</span> <strong>--</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- View Mode Switcher -->
+            <div class="view-tabs-bar">
+              <div class="section-label" style="margin: 0;">Foliage Visual Inspection</div>
+              <div class="view-tabs-buttons">
+                <button class="view-tab-btn active" data-view="annotated" id="btnViewAnnotated">Grad-CAM & Detections</button>
+                <button class="view-tab-btn" data-view="original" id="btnViewOriginal">Original Leaf</button>
+                <button class="view-tab-btn" data-view="split" id="btnViewSplit">Interactive Split</button>
+              </div>
+            </div>
+
+            <!-- Inspection Image Frame -->
+            <div class="result-image-frame" id="resultImageFrame">
+              <img id="resultImage" alt="Diagnostic inspection" src="">
+              
+              <!-- Split Screen Slider Comparison -->
+              <div class="split-viewer-container" id="splitViewer">
+                <div class="split-layer-base">
+                  <img id="splitBaseImg" alt="Base original leaf" src="">
+                </div>
+                <div class="split-layer-overlay" id="splitOverlayWrap">
+                  <img id="splitOverlayImg" alt="Grad-cam overlay leaf" src="">
+                </div>
+                <div class="split-handle" id="splitHandle"></div>
+              </div>
+            </div>
+
+            <!-- Key Severity Metrics -->
+            <div class="stats-metrics-row">
+              <div class="stat-metric-card">
+                <div class="stat-metric-label">Affected Foliage Ratio</div>
+                <div class="stat-metric-val" id="statSeverityRatio">0%</div>
+                <div class="severity-progress-bar">
+                  <div class="severity-progress-fill" id="statSeverityBar" style="width: 0%;"></div>
+                </div>
+              </div>
+              <div class="stat-metric-card">
+                <div class="stat-metric-label">Lesion Clusters Detected</div>
+                <div class="stat-metric-val" id="statLesionCount">0</div>
+              </div>
+              <div class="stat-metric-card">
+                <div class="stat-metric-label">Inference Latency</div>
+                <div class="stat-metric-val" id="statInferenceTime">-- ms</div>
+              </div>
+            </div>
+
+            <!-- Agronomic Treatment & Countermeasures -->
+            <div class="section-label" style="margin-bottom: 0.85rem;">Agronomic Prescription & Remediation</div>
+            <div class="advisory-cards-grid">
+              
+              <div class="advisory-card advisory-card-organic">
+                <div class="advisory-icon">🌿</div>
+                <div class="advisory-content">
+                  <h4>Organic & Biological Remedy</h4>
+                  <p id="advisoryOrganic">Fetching organic protocol...</p>
+                </div>
+              </div>
+
+              <div class="advisory-card advisory-card-chemical">
+                <div class="advisory-icon">🧪</div>
+                <div class="advisory-content">
+                  <h4>Targeted Chemical Treatment</h4>
+                  <p id="advisoryChemical">Fetching chemical protocol...</p>
+                </div>
+              </div>
+
+              <div class="advisory-card advisory-card-preventative">
+                <div class="advisory-icon">🛡️</div>
+                <div class="advisory-content">
+                  <h4>Long-Term Prevention & Cultural Strategy</h4>
+                  <p id="advisoryPreventative">Fetching preventative guidelines...</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Detailed Lesions Table -->
+            <div class="section-label" style="margin-bottom: 0.5rem;">Detected Lesion Localizations</div>
+            <div class="lesions-table-wrap">
+              <table class="lesions-table">
+                <thead>
+                  <tr>
+                    <th>Index</th>
+                    <th>Pathology Classification</th>
+                    <th>Confidence</th>
+                    <th>Bounding Box [x1, y1, x2, y2]</th>
+                  </tr>
+                </thead>
+                <tbody id="lesionsTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Action Toolbar -->
+            <div class="report-actions-bar">
+              <button type="button" class="btn-secondary" id="btnExportJson">
+                <span>💾</span> Export JSON
+              </button>
+              <button type="button" class="btn-secondary" id="btnPrintReport">
+                <span>🖨️</span> Print Diagnostic Report
+              </button>
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 2: PATHOLOGY LIBRARY -->
+    <div id="tabLibrary" style="display: none;">
+      <section class="hero-header">
+        <div class="hero-title-area">
+          <h2>Crop Pathology Knowledge Base</h2>
+          <p class="hero-subtitle">Comprehensive disease profiles and agronomic countermeasures registered in the CropGuard edge diagnostic database.</p>
+        </div>
+      </section>
+
+      <div class="library-grid" id="libraryGrid">
+        <!-- Populated via app.js -->
+      </div>
+    </div>
+
+    <!-- TAB 3: EDGE TELEMETRY & ARCHITECTURE -->
+    <div id="tabTelemetry" style="display: none;">
+      <section class="hero-header">
+        <div class="hero-title-area">
+          <h2>Edge AI Architecture & Pipeline</h2>
+          <p class="hero-subtitle">Real-time inspection of the four-phase computer vision and expert agronomic system pipeline.</p>
+        </div>
+      </section>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-step-num">STAGE 01</div>
+          <h4>Foliage Feature Extraction</h4>
+          <p>YOLOv8 deep convolutional backbone processes high-resolution leaf imagery, identifying multi-scale pathology features and lesion focal boundaries.</p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-step-num">STAGE 02</div>
+          <h4>Grad-CAM Explainability</h4>
+          <p>Calculates class-activation maps and visual saliency gradients to highlight exactly which foliar regions triggered the diagnostic decision.</p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-step-num">STAGE 03</div>
+          <h4>Severity Surface Integration</h4>
+          <p>Computes bounding box union and canopy area ratios to classify lesion proliferation as Mild, Moderate, or Severe.</p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-step-num">STAGE 04</div>
+          <h4>Agronomic Prescription</h4>
+          <p>Resolves matched pathogens against the curated phytosanitary database, generating organic, chemical, and cultural remediation protocols.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Live Webcam Modal -->
+  <div id="webcamModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 680px; max-width: 95%;">
+      <div class="card-title-bar">
+        <h3><span>📷</span> Live Camera Specimen Capture</h3>
+        <button id="btnCloseWebcam" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 1rem; aspect-ratio: 16/9;">
+        <video id="webcamVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn-primary" id="btnCaptureWebcam">
+          <span>📸 Capture & Diagnose</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engine Settings Modal -->
+  <div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 540px; max-width: 95%;">
+      <div class="card-title-bar">
+        <h3><span>⚙️</span> Diagnostic Engine Settings</h3>
+        <button id="btnCloseSettings" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="margin-bottom: 1.25rem;">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          CropGuard AI runs in <strong>In-Browser Web Engine mode</strong> on GitHub Pages by default (zero server setup required). You can optionally connect to a live FastAPI / PyTorch YOLOv8 backend.
+        </p>
+
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Diagnostic Mode
+        </label>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <button type="button" class="btn-secondary" id="btnModeClient" style="flex: 1; border-color: var(--emerald-bright);">
+            🌿 In-Browser Engine
+          </button>
+          <button type="button" class="btn-secondary" id="btnModeServer" style="flex: 1;">
+            ⚡ Remote / Local API
+          </button>
+        </div>
+
+        <div id="serverConfigGroup" style="display: none;">
+          <label for="inputBackendUrl" style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+            FastAPI Server Endpoint
+          </label>
+          <input type="text" id="inputBackendUrl" placeholder="http://127.0.0.1:8000 or https://your-cropguard.onrender.com" 
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--card-border); background: var(--bg-secondary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Must be a running CropGuard FastAPI instance with CORS enabled.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn-secondary" id="btnCancelSettings">Cancel</button>
+        <button type="button" class="btn-primary" id="btnSaveSettings">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>

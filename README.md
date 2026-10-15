@@ -23,6 +23,7 @@ Built for precision agriculture, agronomists, greenhouse operators, and field fa
 - [About the PlantVillage Dataset](#-about-the-plantvillage-dataset)
 - [Model Training & Edge ONNX Export](#-model-training--edge-onnx-export)
 - [Automated Verification Suite](#-automated-verification-suite)
+- [Deploy to GitHub Pages](#-deploy-to-github-pages)
 - [Directory Structure](#-directory-structure)
 - [License](#-license)
 
@@ -245,10 +246,44 @@ python verify_system.py
 
 ---
 
+## 🌐 Deploy to GitHub Pages
+
+CropGuard AI features a **Dual-Engine Architecture** allowing it to run **100% serverless** directly in the browser on GitHub Pages without requiring Python servers or cloud GPU hosting, with an optional toggle to connect to a live remote FastAPI backend.
+
+### Automatic Deployment (GitHub Actions)
+The repository includes a preconfigured GitHub Actions workflow at [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
+
+1. **Push your code to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Configure GitHub Pages deployment"
+   git push origin main
+   ```
+2. In your GitHub repository, navigate to **Settings** → **Pages**.
+3. Under **Build and deployment**:
+   - **Source**: Select **GitHub Actions**.
+4. The workflow will run automatically and deploy your live diagnostic studio to:
+   ```text
+   https://<username>.github.io/<repo-name>/
+   ```
+
+### Alternative: Deploy from Branch (`docs/` folder)
+If you prefer branch-based publishing:
+1. Navigate to **Settings** → **Pages**.
+2. Under **Build and deployment**:
+   - **Source**: Select **Deploy from a branch**.
+   - **Branch**: Select `main` and folder `/docs`.
+   - Click **Save**.
+
+---
+
 ## 📦 Directory Structure
 
 ```text
 plant_disease_detection/
+├── .github/
+│   └── workflows/
+│       └── deploy-pages.yml    # GitHub Actions automated Pages deployment workflow
 ├── api/
 │   └── main.py                 # FastAPI microservice & routing
 ├── data/
@@ -256,6 +291,13 @@ plant_disease_detection/
 │   ├── plant_data.yaml         # YOLOv8 dataset configuration
 │   ├── train/                  # Training images & YOLO annotation labels
 │   └── val/                    # Validation test specimens (images & labels)
+├── docs/                       # Static distribution directory for GitHub Pages
+│   ├── .nojekyll               # Disables Jekyll processing for raw static assets
+│   ├── index.html              # Standalone web diagnostic studio
+│   ├── css/style.css           # Styling with relative asset paths
+│   ├── js/app.js               # Dual-engine controller (In-Browser & Remote API)
+│   ├── data/advisory_db.json   # Static copy of phytosanitary advisory database
+│   └── samples/                # Static 1-click test specimen images
 ├── models/
 │   ├── yolo_detector.pt        # Fine-tuned PyTorch model weights (18 classes)
 │   └── yolo_detector.onnx      # Exported edge ONNX artifact (optional)
@@ -266,9 +308,9 @@ plant_disease_detection/
 │   ├── explainability.py       # Grad-CAM heatmap generation & blending
 │   └── export.py               # ONNX export utility
 ├── static/
-│   ├── css/style.css           # Modern dark-mode styling & responsive layout
-│   ├── js/app.js               # Frontend interactive controller & slider logic
-│   └── index.html              # Diagnostic studio & pathology library UI
+│   ├── css/style.css           # Local development styling
+│   ├── js/app.js               # Local development frontend controller
+│   └── index.html              # Local web interface
 ├── requirements.txt            # Python dependencies
 ├── run.py                      # One-click launcher script
 ├── train.py                    # Model training & fine-tuning script

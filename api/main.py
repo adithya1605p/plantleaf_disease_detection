@@ -51,6 +51,18 @@ DATA_VAL_DIR = Path("data/val/images")
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory="static"), name="static")
+    if (STATIC_DIR / "css").exists():
+        app.mount("/css", StaticFiles(directory="static/css"), name="css")
+    if (STATIC_DIR / "js").exists():
+        app.mount("/js", StaticFiles(directory="static/js"), name="js")
+
+if Path("data").exists():
+    app.mount("/data", StaticFiles(directory="data"), name="data")
+
+if Path("docs/samples").exists():
+    app.mount("/samples", StaticFiles(directory="docs/samples"), name="samples")
+elif DATA_VAL_DIR.exists():
+    app.mount("/samples", StaticFiles(directory="data/val/images"), name="samples")
 
 if DATA_VAL_DIR.exists():
     app.mount("/samples-media", StaticFiles(directory="data/val/images"), name="samples-media")
