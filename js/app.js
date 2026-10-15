@@ -1,8 +1,16 @@
 /**
  * CropGuard AI - Edge Plant Disease Vision & Advisory Engine
  * Static GitHub Pages & Edge Controller with Dual-Engine Architecture:
- * 1. In-Browser Web Engine (Client-side Canvas & Heuristic Vision, zero server needed)
+ * 1. In-Browser Web Engine (Client-side Canvas & Heuristic Vision, zero server needed, 100% offline mobile friendly)
  * 2. Optional Remote/Local FastAPI YOLOv8 Backend
+ * 
+ * Mobile Browser Features:
+ * - Native Rear Camera & In-App Viewfinder with Reticle Alignment
+ * - Front/Rear Camera Switching & Flashlight / Torch Controls
+ * - Touch-Enabled Interactive Split Comparison Slider (touch-action none)
+ * - Mobile Bottom Navigation & Safe Area Insets
+ * - Web Share API Integration for Agronomic Reports
+ * - PWA Service Worker for Offline Field Use
  */
 
 // Application State
@@ -14,13 +22,19 @@ const state = {
   engineMode: localStorage.getItem('cropguard_engine_mode') || 'client', // 'client' | 'server'
   backendUrl: localStorage.getItem('cropguard_backend_url') || '',
   advisoryDb: null,
-  webcamStream: null
+  webcamStream: null,
+  activeCameraTrack: null,
+  currentFacingMode: 'environment', // Default to back camera for leaf photography on phones
+  isTorchOn: false
 };
 
 // DOM Elements
 const elements = {
   dropzone: document.getElementById('dropzone'),
   fileInput: document.getElementById('fileInput'),
+  cameraInput: document.getElementById('cameraInput'),
+  btnNativeCamera: document.getElementById('btnNativeCamera'),
+  btnBrowse: document.getElementById('btnBrowse'),
   previewBox: document.getElementById('previewBox'),
   imagePreview: document.getElementById('imagePreview'),
   scannerOverlay: document.getElementById('scannerOverlay'),
@@ -31,6 +45,8 @@ const elements = {
   webcamVideo: document.getElementById('webcamVideo'),
   btnCaptureWebcam: document.getElementById('btnCaptureWebcam'),
   btnCloseWebcam: document.getElementById('btnCloseWebcam'),
+  btnToggleTorch: document.getElementById('btnToggleTorch'),
+  btnFlipCamera: document.getElementById('btnFlipCamera'),
   presetsGrid: document.getElementById('presetsGrid'),
   
   // Settings Modal
@@ -60,6 +76,7 @@ const elements = {
   splitOverlayImg: document.getElementById('splitOverlayImg'),
   splitOverlayWrap: document.getElementById('splitOverlayWrap'),
   splitHandle: document.getElementById('splitHandle'),
+  splitHintContainer: document.getElementById('splitHintContainer'),
   
   statSeverityRatio: document.getElementById('statSeverityRatio'),
   statSeverityBar: document.getElementById('statSeverityBar'),
@@ -72,8 +89,9 @@ const elements = {
   
   lesionsTableBody: document.getElementById('lesionsTableBody'),
   
-  // Tabs & Nav
-  navTabs: document.querySelectorAll('.nav-tab'),
+  // Tabs & Navigation
+  desktopNavTabs: document.querySelectorAll('.nav-tab'),
+  mobileNavBtns: document.querySelectorAll('.mobile-nav-btn'),
   tabContents: {
     studio: document.getElementById('tabStudio'),
     library: document.getElementById('tabLibrary'),
@@ -88,7 +106,8 @@ const elements = {
   
   // Report buttons
   btnPrintReport: document.getElementById('btnPrintReport'),
-  btnExportJson: document.getElementById('btnExportJson')
+  btnExportJson: document.getElementById('btnExportJson'),
+  btnShareReport: document.getElementById('btnShareReport')
 };
 
 // Preset catalog for quick demonstration (using relative path to ./samples/)
@@ -260,22 +279,39 @@ document.addEventListener('DOMContentLoaded', () => {
   updateEngineStatus();
   loadAdvisoryDatabase();
   setupSplitSlider();
+  registerServiceWorker();
 });
 
-// Navigation Tabs
-function setupNavigation() {
-  elements.navTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.target;
-      elements.navTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+// Navigation: Unified Desktop and Mobile Navigation Sync
+function switchTab(target) {
+  // Update desktop nav
+  elements.desktopNavTabs.forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.target === target);
+  });
 
-      Object.keys(elements.tabContents).forEach(key => {
-        if (elements.tabContents[key]) {
-          elements.tabContents[key].style.display = (key === target) ? 'block' : 'none';
-        }
-      });
-    });
+  // Update mobile bottom nav
+  elements.mobileNavBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.target === target);
+  });
+
+  // Switch visible section
+  Object.keys(elements.tabContents).forEach(key => {
+    if (elements.tabContents[key]) {
+      elements.tabContents[key].style.display = (key === target) ? 'block' : 'none';
+    }
+  });
+
+  // On mobile, scroll cleanly to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setupNavigation() {
+  elements.desktopNavTabs.forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.target));
+  });
+
+  elements.mobileNavBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.target));
   });
 }
 
@@ -286,6 +322,7 @@ function setupPresets() {
     const btn = document.createElement('button');
     btn.className = 'preset-btn';
     btn.type = 'button';
+    btn.setAttribute('aria-label', `Test specimen: ${item.name}`);
     btn.innerHTML = `
       <span class="preset-icon">${item.icon}</span>
       <span class="preset-name">${item.name}</span>
@@ -296,7 +333,7 @@ function setupPresets() {
   });
 }
 
-// Bulletproof asset URL resolver for GitHub Pages & local servers
+// Asset URL resolver for GitHub Pages, local FastAPI, and static hosts
 function getAssetUrl(relPath) {
   const clean = relPath.replace(/^(\.\/|\/)/, '');
   const path = window.location.pathname;
@@ -317,7 +354,7 @@ async function loadPresetSample(preset) {
     file._presetData = preset;
     
     setFile(file);
-    // Trigger diagnosis for seamless demo experience
+    // Instant diagnosis for responsive demo
     runDiagnosis();
   } catch (err) {
     console.error("Preset load error:", err);
@@ -355,7 +392,7 @@ function setupSettingsModal() {
 
     closeSettings();
     updateEngineStatus();
-    showToast(`Engine configured: ${state.engineMode === 'server' ? 'Server API' : 'In-Browser Engine'}`, 'success');
+    showToast(`Engine set to ${state.engineMode === 'server' ? 'Server API' : 'In-Browser Engine'}`, 'success');
   });
 }
 
@@ -378,7 +415,7 @@ function setSettingsModeUI(mode) {
 // Update Engine Status Badge
 async function updateEngineStatus() {
   if (state.engineMode === 'server' && state.backendUrl) {
-    elements.statusText.textContent = "Connecting to API...";
+    elements.statusText.textContent = "Connecting...";
     try {
       const res = await fetch(`${state.backendUrl}/health`, { signal: AbortSignal.timeout(3500) });
       if (res.ok) {
@@ -389,18 +426,19 @@ async function updateEngineStatus() {
         return;
       }
     } catch (e) {
-      console.warn("Backend unavailable, falling back to client engine", e);
+      console.warn("Backend unavailable, fallback to client engine", e);
     }
   }
 
-  // Client mode (GitHub Pages default)
-  elements.statusText.textContent = "In-Browser Web Engine";
+  // Client mode (GitHub Pages and Mobile default)
+  elements.statusText.textContent = "Edge Engine";
   elements.statusPill.style.borderColor = 'var(--emerald-bright)';
   if (elements.deviceChip) elements.deviceChip.innerHTML = `Engine: <strong>In-Browser Web Engine</strong>`;
 }
 
 // Event Listeners
 function setupEventListeners() {
+  // Desktop Drag & Drop
   ['dragenter', 'dragover'].forEach(eventName => {
     elements.dropzone.addEventListener(eventName, (e) => {
       e.preventDefault();
@@ -422,16 +460,40 @@ function setupEventListeners() {
     }
   });
 
+  // Clicking dropzone triggers standard file/photo picker
   elements.dropzone.addEventListener('click', () => {
     elements.fileInput.click();
   });
 
+  // Browse files button
+  if (elements.btnBrowse) {
+    elements.btnBrowse.addEventListener('click', () => {
+      elements.fileInput.click();
+    });
+  }
+
+  // Native mobile camera snap button
+  if (elements.btnNativeCamera && elements.cameraInput) {
+    elements.btnNativeCamera.addEventListener('click', () => {
+      elements.cameraInput.click();
+    });
+
+    elements.cameraInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        setFile(e.target.files[0]);
+        runDiagnosis(); // Automatically start diagnosis when photo is captured
+      }
+    });
+  }
+
+  // Standard File Input
   elements.fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   });
 
+  // Diagnose trigger button
   elements.btnDiagnose.addEventListener('click', () => {
     runDiagnosis();
   });
@@ -440,28 +502,40 @@ function setupEventListeners() {
 
   // View tabs (Annotated, Original, Split)
   document.getElementById('btnViewAnnotated').addEventListener('click', (e) => {
-    updateActiveViewTab(e.target);
+    updateActiveViewTab(e.currentTarget);
     setViewMode('annotated');
   });
 
   document.getElementById('btnViewOriginal').addEventListener('click', (e) => {
-    updateActiveViewTab(e.target);
+    updateActiveViewTab(e.currentTarget);
     setViewMode('original');
   });
 
   document.getElementById('btnViewSplit').addEventListener('click', (e) => {
-    updateActiveViewTab(e.target);
+    updateActiveViewTab(e.currentTarget);
     setViewMode('split');
   });
 
-  // Webcam actions
+  // Live Camera Viewfinder actions
   elements.btnWebcam.addEventListener('click', openWebcamModal);
   elements.btnCloseWebcam.addEventListener('click', closeWebcamModal);
   elements.btnCaptureWebcam.addEventListener('click', captureWebcamFrame);
 
-  // Export buttons
+  if (elements.btnFlipCamera) {
+    elements.btnFlipCamera.addEventListener('click', flipCamera);
+  }
+
+  if (elements.btnToggleTorch) {
+    elements.btnToggleTorch.addEventListener('click', toggleTorch);
+  }
+
+  // Export & Share buttons
   elements.btnExportJson.addEventListener('click', exportJsonReport);
   elements.btnPrintReport.addEventListener('click', () => window.print());
+  
+  if (elements.btnShareReport) {
+    elements.btnShareReport.addEventListener('click', shareDiagnosticReport);
+  }
 }
 
 function updateActiveViewTab(button) {
@@ -501,6 +575,7 @@ function resetAll() {
   elements.previewBox.style.display = 'none';
   elements.btnDiagnose.disabled = true;
   elements.fileInput.value = '';
+  if (elements.cameraInput) elements.cameraInput.value = '';
   
   elements.placeholderState.style.display = 'block';
   elements.resultsContainer.style.display = 'none';
@@ -514,7 +589,7 @@ async function runDiagnosis() {
   try {
     elements.btnDiagnose.disabled = true;
     elements.scannerOverlay.style.display = 'block';
-    showToast("Extracting features and evaluating foliar pathology...");
+    showToast("Extracting foliar features and evaluating pathology...");
 
     const startTime = performance.now();
     let data = null;
@@ -539,7 +614,7 @@ async function runDiagnosis() {
       }
     }
 
-    // 2. Client-Side In-Browser Engine (GitHub Pages Native)
+    // 2. Client-Side In-Browser Engine (GitHub Pages Native & Mobile Offline)
     if (!data) {
       data = await runClientSideDiagnosis(state.currentFile);
     }
@@ -551,6 +626,11 @@ async function runDiagnosis() {
 
     renderDiagnosisResults(data);
     showToast("Diagnosis completed successfully!", "success");
+
+    // On mobile screens, scroll down to results smoothly
+    if (window.innerWidth <= 768 && elements.resultsContainer) {
+      elements.resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   } catch (error) {
     console.error("Diagnosis error:", error);
     showToast(`Error: ${error.message}`, "error");
@@ -562,7 +642,7 @@ async function runDiagnosis() {
 
 /**
  * In-Browser Client-side Leaf Pathology & Grad-CAM Heatmap Engine
- * Enables 100% serverless execution on GitHub Pages
+ * Enables 100% serverless execution on GitHub Pages and Mobile Browsers
  */
 async function runClientSideDiagnosis(file) {
   return new Promise((resolve, reject) => {
@@ -594,11 +674,11 @@ function processLeafImageOnCanvas(img, file) {
   const imgData = ctx.getImageData(0, 0, w, h);
   const data = imgData.data;
 
-  // Pixel color analysis: detect foliar canopy vs lesions/spots
+  // Pixel chromatic analysis: detect foliar canopy vs lesions/spots
   let totalLeafPixels = 0;
   let diseasedPixels = 0;
   let totalR = 0, totalG = 0, totalB = 0;
-  const sampleStep = 4; // Sample every 4th pixel for speed
+  const sampleStep = 4; // Fast step for smooth mobile performance
 
   const lesionClusters = [];
 
@@ -609,7 +689,7 @@ function processLeafImageOnCanvas(img, file) {
       const g = data[idx + 1];
       const b = data[idx + 2];
 
-      // Exclude pure white/black studio backgrounds
+      // Filter out neutral or pure background pixels
       const isBg = (r > 240 && g > 240 && b > 240) || (r < 18 && g < 18 && b < 18);
       if (isBg) continue;
 
@@ -708,11 +788,11 @@ function processLeafImageOnCanvas(img, file) {
       const radius = Math.max(x2 - x1, y2 - y1) * 0.85;
 
       const grad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
-      grad.addColorStop(0, 'rgba(255, 0, 0, 0.7)');    // Focal red peak
+      grad.addColorStop(0, 'rgba(255, 0, 0, 0.7)');     // Focal red peak
       grad.addColorStop(0.35, 'rgba(255, 170, 0, 0.6)'); // Amber halo
       grad.addColorStop(0.65, 'rgba(0, 255, 120, 0.45)');// Green transition
       grad.addColorStop(0.85, 'rgba(0, 160, 255, 0.25)');// Cyan boundary
-      grad.addColorStop(1, 'rgba(0, 0, 255, 0.0)');     // Transparent edge
+      grad.addColorStop(1, 'rgba(0, 0, 255, 0.0)');      // Transparent edge
 
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
@@ -843,21 +923,26 @@ function renderDiagnosisResults(data) {
 // View Mode Switching
 function setViewMode(mode) {
   state.activeViewMode = mode;
+  if (!state.currentResult) return;
+
   if (mode === 'annotated') {
     elements.resultImage.src = state.currentResult.annotated_image_b64;
     elements.resultImage.style.display = 'block';
     elements.splitViewer.style.display = 'none';
+    if (elements.splitHintContainer) elements.splitHintContainer.style.display = 'none';
   } else if (mode === 'original') {
     elements.resultImage.src = state.currentOriginalUrl;
     elements.resultImage.style.display = 'block';
     elements.splitViewer.style.display = 'none';
+    if (elements.splitHintContainer) elements.splitHintContainer.style.display = 'none';
   } else if (mode === 'split') {
     elements.resultImage.style.display = 'none';
     elements.splitViewer.style.display = 'block';
+    if (elements.splitHintContainer) elements.splitHintContainer.style.display = 'block';
   }
 }
 
-// Split Slider Controller
+// Mobile & Desktop Touch-Enabled Split Slider Controller
 function setupSplitSlider() {
   let isDragging = false;
 
@@ -872,17 +957,32 @@ function setupSplitSlider() {
     elements.splitHandle.style.left = `${percent}%`;
   };
 
-  elements.splitHandle.addEventListener('mousedown', () => { isDragging = true; });
+  // Mouse Listeners
+  elements.splitViewer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    onMove(e.clientX);
+  });
   window.addEventListener('mouseup', () => { isDragging = false; });
   window.addEventListener('mousemove', (e) => {
     if (isDragging) onMove(e.clientX);
   });
 
-  elements.splitHandle.addEventListener('touchstart', () => { isDragging = true; });
-  window.addEventListener('touchend', () => { isDragging = false; });
+  // Mobile Touch Listeners with non-passive preventDefault to prevent screen scroll
+  elements.splitViewer.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 0) {
+      isDragging = true;
+      onMove(e.touches[0].clientX);
+    }
+  }, { passive: true });
+
   window.addEventListener('touchmove', (e) => {
-    if (isDragging && e.touches.length > 0) onMove(e.touches[0].clientX);
-  });
+    if (isDragging && e.touches.length > 0) {
+      if (e.cancelable) e.preventDefault(); // Prevents vertical page scroll while sliding comparison
+      onMove(e.touches[0].clientX);
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => { isDragging = false; });
 }
 
 // Load Advisory Database for Library Tab
@@ -937,16 +1037,70 @@ function renderLibrary(db) {
   });
 }
 
-// Webcam stream handling
+// ==========================================================================
+// CAMERA VIEWPORT (Mobile Rear/Front Switching & Flashlight / Torch)
+// ==========================================================================
 async function openWebcamModal() {
   elements.webcamModal.style.display = 'flex';
+  await startCameraStream();
+}
+
+async function startCameraStream() {
   try {
-    state.webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+    const constraints = {
+      video: {
+        facingMode: { ideal: state.currentFacingMode },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
+      audio: false
+    };
+
+    state.webcamStream = await navigator.mediaDevices.getUserMedia(constraints);
     elements.webcamVideo.srcObject = state.webcamStream;
+    await elements.webcamVideo.play().catch(e => console.log("Video play primed:", e));
+
+    // Inspect capabilities for torch / flashlight
+    const track = state.webcamStream.getVideoTracks()[0];
+    state.activeCameraTrack = track;
+    const capabilities = (track && track.getCapabilities) ? track.getCapabilities() : {};
+
+    if (capabilities.torch && elements.btnToggleTorch) {
+      elements.btnToggleTorch.style.display = 'inline-flex';
+      state.isTorchOn = false;
+    } else if (elements.btnToggleTorch) {
+      elements.btnToggleTorch.style.display = 'none';
+    }
   } catch (err) {
-    console.error("Webcam access error:", err);
-    showToast("Could not access camera device.", "error");
+    console.error("Camera access error:", err);
+    showToast("Could not access camera device. Check browser permissions.", "error");
     closeWebcamModal();
+  }
+}
+
+async function flipCamera() {
+  state.currentFacingMode = (state.currentFacingMode === 'environment') ? 'user' : 'environment';
+  if (state.webcamStream) {
+    state.webcamStream.getTracks().forEach(track => track.stop());
+    state.webcamStream = null;
+  }
+  showToast(`Switching to ${state.currentFacingMode === 'environment' ? 'Rear' : 'Front'} Camera...`, 'info');
+  await startCameraStream();
+}
+
+async function toggleTorch() {
+  if (!state.activeCameraTrack) return;
+  const capabilities = state.activeCameraTrack.getCapabilities ? state.activeCameraTrack.getCapabilities() : {};
+  if (capabilities.torch) {
+    try {
+      state.isTorchOn = !state.isTorchOn;
+      await state.activeCameraTrack.applyConstraints({
+        advanced: [{ torch: state.isTorchOn }]
+      });
+      showToast(state.isTorchOn ? "Flashlight Torch ON" : "Flashlight Torch OFF", "info");
+    } catch (e) {
+      console.warn("Torch toggle failed:", e);
+    }
   }
 }
 
@@ -955,7 +1109,9 @@ function closeWebcamModal() {
   if (state.webcamStream) {
     state.webcamStream.getTracks().forEach(track => track.stop());
     state.webcamStream = null;
+    state.activeCameraTrack = null;
   }
+  state.isTorchOn = false;
 }
 
 function captureWebcamFrame() {
@@ -967,11 +1123,63 @@ function captureWebcamFrame() {
   ctx.drawImage(elements.webcamVideo, 0, 0, canvas.width, canvas.height);
 
   canvas.toBlob((blob) => {
-    const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+    const file = new File([blob], "camera_leaf_capture.jpg", { type: "image/jpeg" });
     setFile(file);
     closeWebcamModal();
     runDiagnosis();
   }, 'image/jpeg', 0.95);
+}
+
+// ==========================================================================
+// EXPORT & MOBILE WEB SHARE API
+// ==========================================================================
+async function shareDiagnosticReport() {
+  if (!state.currentResult) {
+    showToast("Diagnose a leaf specimen first to share results.", "info");
+    return;
+  }
+
+  const res = state.currentResult;
+  const diseaseName = res.remedies.display_name || res.primary_diagnosis.replace(/_/g, ' ');
+  const sev = res.severity || { classification: 'Unknown', ratio: 0 };
+
+  const shareText = `🌿 CropGuard AI Diagnostic Report
+Pathology: ${diseaseName}
+Severity: ${sev.classification} (${sev.ratio}% leaf canopy affected)
+Organic Countermeasure: ${res.remedies.organic_remedy}
+Chemical Countermeasure: ${res.remedies.chemical_remedy}
+Preventative: ${res.remedies.preventative}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `CropGuard AI: ${diseaseName}`,
+        text: shareText,
+        url: window.location.href
+      });
+      showToast("Report shared successfully!", "success");
+      return;
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        copyReportToClipboard(shareText);
+      }
+      return;
+    }
+  }
+
+  copyReportToClipboard(shareText);
+}
+
+function copyReportToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("Diagnostic report copied to clipboard!", "success");
+    }).catch(() => {
+      exportJsonReport();
+    });
+  } else {
+    exportJsonReport();
+  }
 }
 
 // Export JSON
@@ -984,6 +1192,7 @@ function exportJsonReport() {
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
   downloadAnchor.remove();
+  showToast("Diagnostic JSON downloaded", "success");
 }
 
 // Toast notification helper
@@ -1003,4 +1212,17 @@ function showToast(message, type = 'info') {
   toast._timeout = setTimeout(() => {
     toast.classList.remove('show');
   }, 3200);
+}
+
+// Progressive Web App Service Worker Registration
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').then((reg) => {
+        console.log("CropGuard AI Service Worker registered:", reg.scope);
+      }).catch((err) => {
+        console.log("Service Worker registration optional:", err);
+      });
+    });
+  }
 }

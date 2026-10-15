@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070d0a"/>
+      <stop offset="50%" stop-color="#0c1a14"/>
+      <stop offset="100%" stop-color="#042f21"/>
+    </linearGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- App Background with rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#34d399" stroke-width="3" stroke-opacity="0.3"/>
+  
+  <!-- Glowing Scanner Grid Lines -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="8 8"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.25"/>
+  
+  <!-- Reticle Corners -->
+  <path d="M 120 160 L 120 120 L 160 120" fill="none" stroke="#34d399" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 392 160 L 392 120 L 352 120" fill="none" stroke="#34d399" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 120 352 L 120 392 L 160 392" fill="none" stroke="#34d399" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 392 352 L 392 392 L 352 392" fill="none" stroke="#34d399" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Stylized Foliage Leaf -->
+  <g filter="url(#glow)">
+    <path d="M 360,160 C 200,195 160,305 125,395 L 157,407 L 174,367 C 182,370 191,372 200,372 C 385,372 420,80 420,80 C 405,115 285,120 200,138 C 120,155 85,225 85,260 C 85,295 115,325 115,325 C 170,160 360,160 360,160 Z" fill="url(#leafGrad)"/>
+    <path d="M 200,372 Q 240,260 380,120" fill="none" stroke="#a7f3d0" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Neural / Heatmap Node Pulses -->
+  <circle cx="290" cy="210" r="12" fill="#f43f5e" opacity="0.9" filter="url(#glow)"/>
+  <circle cx="230" cy="280" r="10" fill="#f59e0b" opacity="0.9" filter="url(#glow)"/>
+  <circle cx="340" cy="270" r="8" fill="#10b981" opacity="0.9" filter="url(#glow)"/>
+</svg>

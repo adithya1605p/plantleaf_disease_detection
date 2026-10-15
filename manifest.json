@@ -1,0 +1,20 @@
+{
+  "name": "CropGuard AI - Plant Foliage Pathology",
+  "short_name": "CropGuard AI",
+  "description": "Mobile Edge Plant Disease Vision, Grad-CAM Lesion Heatmaps & Agronomic Prescriptive Advisory",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070d0a",
+  "theme_color": "#070d0a",
+  "categories": ["utilities", "productivity", "agriculture"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

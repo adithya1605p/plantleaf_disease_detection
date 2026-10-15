@@ -2,9 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>CropGuard AI - Edge Plant Disease Vision & Agronomic Advisory Engine</title>
-  <meta name="description" content="Edge-deployable crop pathology diagnostic platform with YOLOv8 lesion detection, Grad-CAM attention heatmaps, and agronomic prescriptive advisory.">
+  <meta name="description" content="Mobile and edge-deployable crop pathology diagnostic platform with YOLOv8 lesion detection, Grad-CAM attention heatmaps, and agronomic prescriptive advisory.">
+  
+  <!-- Mobile PWA & Browser Theming -->
+  <meta name="theme-color" content="#070d0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CropGuard AI">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="apple-touch-icon" href="./icon.svg">
   
   <!-- Modern Typography from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,11 +36,12 @@
       </div>
       <div class="brand-text">
         <h1>CropGuard AI</h1>
-        <span>Edge Pathology & Advisory Engine</span>
+        <span>Edge Pathology Engine</span>
       </div>
     </a>
 
-    <div class="nav-center">
+    <!-- Desktop Navigation Center -->
+    <div class="nav-center desktop-only">
       <button class="nav-tab active" data-target="studio" id="navTabStudio">
         <span>🔬</span> Diagnostic Studio
       </button>
@@ -41,13 +53,16 @@
       </button>
     </div>
 
+    <!-- Navigation Status & Engine Settings -->
     <div class="nav-status">
       <div class="status-pill" id="statusPill" title="Current Engine Status">
         <div class="status-dot"></div>
-        <span id="statusText">In-Browser Engine</span>
+        <span id="statusText">Edge Engine</span>
       </div>
-      <button class="btn-backend-settings" id="btnSettings" title="Engine & Backend Settings">⚙️ Engine</button>
-      <a href="https://github.com/adithya1605p/plantleaf_disease_detection" target="_blank" class="api-docs-link" id="linkApiDocs">GitHub Repo ↗</a>
+      <button class="btn-backend-settings" id="btnSettings" title="Diagnostic Engine Settings" aria-label="Engine Settings">
+        <span>⚙️</span><span class="btn-settings-label">Engine</span>
+      </button>
+      <a href="https://github.com/adithya1605p/plantleaf_disease_detection" target="_blank" rel="noopener" class="api-docs-link desktop-only" id="linkApiDocs">GitHub ↗</a>
     </div>
   </nav>
 
@@ -62,16 +77,16 @@
         <div class="hero-title-area">
           <h2>Precision Plant Foliage Pathology</h2>
           <p class="hero-subtitle">
-            Upload plant foliage or select validated test specimens to trigger deep-learning lesion detection, 
+            Capture leaves via mobile camera or select validated test specimens to trigger deep-learning lesion detection, 
             Grad-CAM attention heatmaps, and prescriptive agronomic countermeasures.
           </p>
         </div>
         <div class="telemetry-badges">
           <div class="telemetry-chip" id="deviceChip">
-            <span>Engine:</span> <strong>WebAssembly / Canvas Edge</strong>
+            <span>Engine:</span> <strong>WebAssembly / Edge Canvas</strong>
           </div>
           <div class="telemetry-chip" id="classesChip">
-            <span>Pathology Classes:</span> <strong>18 Registered (PlantVillage)</strong>
+            <span>Classes:</span> <strong>18 Registered</strong>
           </div>
           <div class="telemetry-chip">
             <span>Pipeline:</span> <strong>YOLOv8 + Grad-CAM</strong>
@@ -86,14 +101,14 @@
         <section class="glass-card" id="specimenCard">
           <div class="card-title-bar">
             <h3><span>🍃</span> Specimen Acquisition</h3>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Input Channel</span>
+            <span class="channel-badge">Mobile & Edge Vision</span>
           </div>
 
           <!-- Quick Test Presets -->
           <div class="presets-section">
             <div class="section-label">
               <span>Quick Test Specimens</span>
-              <span style="font-size:0.65rem; color:var(--text-muted);">1-Click Demo</span>
+              <span class="section-label-sub">1-Tap Demo</span>
             </div>
             <div class="presets-grid" id="presetsGrid">
               <!-- Dynamically populated via app.js -->
@@ -102,12 +117,19 @@
 
           <!-- Upload Dropzone -->
           <div class="dropzone-container" id="dropzone">
-            <svg class="dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            <div class="dropzone-text">Drop leaf image here or click to browse</div>
-            <div class="dropzone-hint">Supports JPEG, PNG, WEBP (Max 15MB)</div>
+            <div class="dropzone-icons-group">
+              <svg class="dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div class="dropzone-text" id="dropzoneText">Tap to snap photo or choose leaf image</div>
+            <div class="dropzone-hint">Supports Camera, Photo Library, JPEG, PNG, WEBP</div>
+            
+            <!-- Standard File Input -->
             <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <!-- Mobile Direct Camera Capture Input -->
+            <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
           </div>
 
           <!-- Preview Box -->
@@ -116,17 +138,23 @@
             <div class="scanner-overlay" id="scannerOverlay"></div>
           </div>
 
-          <!-- Action Buttons -->
+          <!-- Action Buttons Bar -->
           <div class="upload-actions">
-            <button type="button" class="btn-secondary" id="btnWebcam">
-              <span>📷</span> Live Camera
+            <button type="button" class="btn-secondary btn-action-camera" id="btnWebcam" title="Open real-time camera viewfinder">
+              <span>📹</span> Live Camera
             </button>
-            <button type="button" class="btn-secondary" id="btnReset">
+            <button type="button" class="btn-secondary btn-action-snap" id="btnNativeCamera" title="Snap leaf photo directly with phone camera">
+              <span>📷</span> Snap Photo
+            </button>
+            <button type="button" class="btn-secondary btn-action-browse" id="btnBrowse" title="Choose image from photos or files">
+              <span>📁</span> Choose Image
+            </button>
+            <button type="button" class="btn-secondary btn-action-reset" id="btnReset" title="Reset specimen">
               <span>🔄</span> Reset
             </button>
           </div>
 
-          <button type="button" class="btn-primary" id="btnDiagnose" disabled>
+          <button type="button" class="btn-primary btn-diagnose-main" id="btnDiagnose" disabled>
             <span>⚡ Run AI Pathology Diagnosis</span>
           </button>
         </section>
@@ -140,7 +168,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
             <h4>Awaiting Plant Specimen</h4>
-            <p>Select a sample preset or drag and drop a leaf photograph on the left to analyze disease pathogens, calculate severity, and formulate treatments.</p>
+            <p>Use your mobile camera or pick a sample preset above to diagnose foliage pathogens, calculate lesion severity, and get prescriptive agronomic remedies.</p>
           </div>
 
           <!-- Analysis Results View -->
@@ -169,10 +197,15 @@
             <div class="view-tabs-bar">
               <div class="section-label" style="margin: 0;">Foliage Visual Inspection</div>
               <div class="view-tabs-buttons">
-                <button class="view-tab-btn active" data-view="annotated" id="btnViewAnnotated">Grad-CAM & Detections</button>
-                <button class="view-tab-btn" data-view="original" id="btnViewOriginal">Original Leaf</button>
-                <button class="view-tab-btn" data-view="split" id="btnViewSplit">Interactive Split</button>
+                <button type="button" class="view-tab-btn active" data-view="annotated" id="btnViewAnnotated">Grad-CAM</button>
+                <button type="button" class="view-tab-btn" data-view="original" id="btnViewOriginal">Original</button>
+                <button type="button" class="view-tab-btn" data-view="split" id="btnViewSplit">Split ↔</button>
               </div>
+            </div>
+
+            <!-- Interactive Split Comparison Tip -->
+            <div class="split-hint-container" id="splitHintContainer" style="display: none;">
+              <span class="split-hint-badge"><span>↔</span> Touch and drag anywhere on leaf to compare</span>
             </div>
 
             <!-- Inspection Image Frame -->
@@ -187,7 +220,7 @@
                 <div class="split-layer-overlay" id="splitOverlayWrap">
                   <img id="splitOverlayImg" alt="Grad-cam overlay leaf" src="">
                 </div>
-                <div class="split-handle" id="splitHandle"></div>
+                <div class="split-handle" id="splitHandle" aria-label="Comparison slider handle"></div>
               </div>
             </div>
 
@@ -201,7 +234,7 @@
                 </div>
               </div>
               <div class="stat-metric-card">
-                <div class="stat-metric-label">Lesion Clusters Detected</div>
+                <div class="stat-metric-label">Lesion Clusters</div>
                 <div class="stat-metric-val" id="statLesionCount">0</div>
               </div>
               <div class="stat-metric-card">
@@ -249,7 +282,7 @@
                     <th>Index</th>
                     <th>Pathology Classification</th>
                     <th>Confidence</th>
-                    <th>Bounding Box [x1, y1, x2, y2]</th>
+                    <th>Bounding Box</th>
                   </tr>
                 </thead>
                 <tbody id="lesionsTableBody">
@@ -258,13 +291,16 @@
               </table>
             </div>
 
-            <!-- Action Toolbar -->
+            <!-- Action Toolbar (With Mobile Share) -->
             <div class="report-actions-bar">
+              <button type="button" class="btn-secondary" id="btnShareReport">
+                <span>📲</span> Share Diagnosis
+              </button>
               <button type="button" class="btn-secondary" id="btnExportJson">
                 <span>💾</span> Export JSON
               </button>
               <button type="button" class="btn-secondary" id="btnPrintReport">
-                <span>🖨️</span> Print Diagnostic Report
+                <span>🖨️</span> Print / PDF
               </button>
             </div>
 
@@ -295,7 +331,7 @@
       <section class="hero-header">
         <div class="hero-title-area">
           <h2>Edge AI Architecture & Pipeline</h2>
-          <p class="hero-subtitle">Real-time inspection of the four-phase computer vision and expert agronomic system pipeline.</p>
+          <p class="hero-subtitle">Real-time inspection of the four-phase computer vision and expert agronomic system pipeline running on your mobile or desktop browser.</p>
         </div>
       </section>
 
@@ -328,59 +364,97 @@
 
   </main>
 
-  <!-- Live Webcam Modal -->
-  <div id="webcamModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 680px; max-width: 95%;">
-      <div class="card-title-bar">
-        <h3><span>📷</span> Live Camera Specimen Capture</h3>
-        <button id="btnCloseWebcam" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+  <!-- Mobile Bottom Navigation Bar (Gold standard mobile UX) -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile Bottom Navigation">
+    <button type="button" class="mobile-nav-btn active" data-target="studio" id="mNavStudio">
+      <span class="m-nav-icon">🔬</span>
+      <span class="m-nav-label">Studio</span>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-target="library" id="mNavLibrary">
+      <span class="m-nav-icon">📚</span>
+      <span class="m-nav-label">Library</span>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-target="telemetry" id="mNavTelemetry">
+      <span class="m-nav-icon">⚡</span>
+      <span class="m-nav-label">Pipeline</span>
+    </button>
+  </nav>
+
+  <!-- Live Mobile & Desktop Camera Viewfinder Modal -->
+  <div id="webcamModal" class="camera-modal-backdrop" style="display: none;">
+    <div class="glass-card camera-modal-card">
+      <div class="camera-modal-header">
+        <div class="camera-modal-title">
+          <span>📷</span> <h3>Live Foliage Scanner</h3>
+        </div>
+        <div class="camera-header-actions">
+          <button type="button" class="btn-camera-ctrl" id="btnToggleTorch" title="Toggle Flashlight / Torch" style="display: none;">
+            <span>🔦</span>
+          </button>
+          <button type="button" class="btn-camera-ctrl" id="btnFlipCamera" title="Switch between Rear and Front Camera">
+            <span>🔄</span> Flip
+          </button>
+          <button type="button" class="btn-close-modal" id="btnCloseWebcam" aria-label="Close Camera">&times;</button>
+        </div>
       </div>
-      <div style="border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 1rem; aspect-ratio: 16/9;">
-        <video id="webcamVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+
+      <!-- Viewfinder with Foliage Alignment Reticle -->
+      <div class="camera-viewfinder-container">
+        <video id="webcamVideo" autoplay playsinline muted></video>
+        <div class="camera-reticle">
+          <div class="reticle-corner reticle-tl"></div>
+          <div class="reticle-corner reticle-tr"></div>
+          <div class="reticle-corner reticle-bl"></div>
+          <div class="reticle-corner reticle-br"></div>
+          <div class="reticle-hint"><span>🌿</span> Align plant leaf inside frame</div>
+        </div>
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-        <button type="button" class="btn-primary" id="btnCaptureWebcam">
-          <span>📸 Capture & Diagnose</span>
+
+      <!-- Camera Modal Bottom Shutter Controls -->
+      <div class="camera-modal-bottom">
+        <button type="button" class="camera-shutter-btn" id="btnCaptureWebcam" aria-label="Capture leaf specimen">
+          <div class="shutter-inner-ring"></div>
         </button>
+        <div class="camera-shutter-hint">Tap to capture & diagnose</div>
       </div>
     </div>
   </div>
 
   <!-- Engine Settings Modal -->
-  <div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 540px; max-width: 95%;">
+  <div id="settingsModal" class="settings-modal-backdrop" style="display: none;">
+    <div class="glass-card settings-modal-card">
       <div class="card-title-bar">
         <h3><span>⚙️</span> Diagnostic Engine Settings</h3>
-        <button id="btnCloseSettings" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        <button type="button" class="btn-close-modal" id="btnCloseSettings" aria-label="Close Settings">&times;</button>
       </div>
-      <div style="margin-bottom: 1.25rem;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
-          CropGuard AI runs in <strong>In-Browser Web Engine mode</strong> on GitHub Pages by default (zero server setup required). You can optionally connect to a live FastAPI / PyTorch YOLOv8 backend.
+      <div class="settings-modal-body">
+        <p class="settings-desc">
+          CropGuard AI runs in <strong>In-Browser Web Engine mode</strong> by default (zero server setup required). Works 100% offline on mobile browsers. You can optionally connect to a remote or local FastAPI / PyTorch YOLOv8 backend.
         </p>
 
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+        <label class="settings-label">
           Diagnostic Mode
         </label>
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-          <button type="button" class="btn-secondary" id="btnModeClient" style="flex: 1; border-color: var(--emerald-bright);">
+        <div class="settings-mode-switcher">
+          <button type="button" class="btn-secondary" id="btnModeClient">
             🌿 In-Browser Engine
           </button>
-          <button type="button" class="btn-secondary" id="btnModeServer" style="flex: 1;">
+          <button type="button" class="btn-secondary" id="btnModeServer">
             ⚡ Remote / Local API
           </button>
         </div>
 
         <div id="serverConfigGroup" style="display: none;">
-          <label for="inputBackendUrl" style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem;">
+          <label for="inputBackendUrl" class="settings-label">
             FastAPI Server Endpoint
           </label>
           <input type="text" id="inputBackendUrl" placeholder="http://127.0.0.1:8000 or https://your-cropguard.onrender.com" 
-            style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--card-border); background: var(--bg-secondary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 0.5rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Must be a running CropGuard FastAPI instance with CORS enabled.</div>
+            class="settings-input-url">
+          <div class="settings-input-hint">Must be a reachable CropGuard FastAPI instance with CORS enabled.</div>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+      <div class="settings-modal-footer">
         <button type="button" class="btn-secondary" id="btnCancelSettings">Cancel</button>
         <button type="button" class="btn-primary" id="btnSaveSettings">Save & Apply</button>
       </div>
